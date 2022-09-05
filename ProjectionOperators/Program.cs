@@ -7,12 +7,26 @@ using System.Threading.Tasks;
 
 namespace ProjectionOperators
 {
-    class Employee
-	{
-		public int EmployeeID { get; set; }
-		public string Name { get; set; }
-		public int Salary { get; set; }
-	}
+    public class Employee
+    {
+        public int ID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int Salary { get; set; }
+        public static List<Employee> GetEmployees()
+        {
+            List<Employee> employees = new List<Employee>
+            {
+                new Employee {ID = 101, FirstName = "Preety", LastName = "Tiwary", Salary = 60000 },
+                new Employee {ID = 102, FirstName = "Priyanka", LastName = "Dewangan", Salary = 70000 },
+                new Employee {ID = 103, FirstName = "Hina", LastName = "Sharma", Salary = 80000 },
+                new Employee {ID = 104, FirstName = "Anurag", LastName = "Mohanty", Salary = 90000 },
+                new Employee {ID = 105, FirstName = "Sambit", LastName = "Satapathy", Salary = 100000 },
+                new Employee {ID = 106, FirstName = "Sushanta", LastName = "Jena", Salary = 160000 }
+            };
+            return employees;
+        }
+    }
     class Program
     {
         static void Main(string[] args)
@@ -26,6 +40,9 @@ namespace ProjectionOperators
             /*
             DataTable dt = GetAllEmployees();
             EnumerableRowCollection<string> result = dt.AsEnumerable().Select(emp => emp.Field<string>("FirstName"));
+
+           // var output = dt.AsEnumerable().Select((datarow) => datarow.Field<string>("FirstName"));
+           // var output = dt.AsEnumerable().Select((datarow) => new { name = datarow.Field<string>("FirstName")});
 
             foreach (var name in result)
             {
@@ -119,7 +136,6 @@ namespace ProjectionOperators
 			}*/
             #endregion
 
-
             #region inside anonymous, using assigned to some variable
             /*
             DataTable dt = GetAllEmployees();
@@ -139,6 +155,114 @@ namespace ProjectionOperators
 				Console.WriteLine($"The employeename is {v}");
 			}
             */
+            #endregion
+
+            #region getting index positon for employees when the data source is DataTable
+            /*
+            DataTable dt = GetAllEmployees();
+			var result = dt.AsEnumerable().Select((row,index) => new 
+                                                  { 
+                                                    employeeIndex = index,
+                                                    Name = row.Field<string>("FirstName") + row.Field<string>("LastName")
+                                                    }); //this is simple access
+
+            foreach (var v in result)
+            {
+                Console.WriteLine($"The employeeIndex is {v.employeeIndex} and empoyeeName is {v.Name}");
+            }
+            */
+            #endregion
+
+            #region getting index positon for employees when the data source is collection
+            /*
+            var result = Employee.GetEmployees().AsEnumerable().Select((emp, index) => new
+            {
+                employeeIndex = index,
+                Name = emp.FirstName + emp.LastName
+            }); //this is simple access
+
+            foreach (var v in result)
+            {
+                Console.WriteLine($"The employeeIndex is {v.employeeIndex} and empoyeeName is {v.Name}");
+            }
+            */
+            #endregion
+
+            #region Select Many method
+            //Func<Student, List<string>> func = (student) => student.Programming.ToList();
+            // var result = Student.GetStudents().AsEnumerable().SelectMany(func);
+
+            // Func<Student, List<string>> func = (student) => student.Programming.ToList();
+
+            // var result = Student.GetStudents().AsEnumerable().SelectMany(func);
+            //var result1 = Student.GetStudents().AsEnumerable().SelectMany(x => x.Programming,
+            //                                                        (student, programmingLanguage) => new 
+            //                                                        { 
+            //                                                            StudentName = student.Name, 
+            //                                                            Technologies = programmingLanguage 
+            //                                                        });
+            //foreach (var v in result1)
+            //{
+            //    Console.WriteLine($"The student techonologies are {v.StudentName}{v.Technologies}");
+            //}
+            #endregion
+
+            #region Select Many with simple example
+
+            /*remember that inside selectmany itself we have two func. This is not chaining method ok. 
+			 1st Func---> Expecting input as string, i.e each person and return IEnumerable<T> 
+			 2nd Func---> Expecting input as string, i.e each person + Expecting input as IEnumerable<T> where is T is dataType of previous lambda output
+			  and return ananymous type by project new type
+            List<string> nameList = new List<string>() { "Pranaya", "Kumar" };
+            var methodSyntax = nameList.SelectMany(data => data, (personName, alphabets) => new
+            {
+                personName = personName,
+                alphabets = alphabets
+            });
+
+            foreach (var item in methodSyntax)
+            {
+                Console.WriteLine($"{item.personName} ==> {item.alphabets}");
+            }
+            Console.ReadKey();*/
+
+            /*OUTPUT
+				Pranaya ==> P
+				Pranaya ==> r
+				Pranaya ==> a
+				Pranaya ==> n
+				Pranaya ==> a
+				Pranaya ==> y
+				Pranaya ==> a
+				Kumar ==> K
+				Kumar ==> u
+				Kumar ==> m
+				Kumar ==> a
+				Kumar ==> r
+
+			 
+			 */
+
+            #endregion
+
+
+            #region SelectMany with new Example
+
+            /*IMP POINT: Func output result is also infered from the output of lambda expression. If we give string as output then the return type
+			 * will be of type string 
+			 * Ex: Func<string, char, string> func2 = (data, func1) => $"{data}-->{func1}";
+			 * There is no such rules like we need to project to new ananymous types like we saw in our previous examples**/
+
+            List<string> nameList = new List<string>() { "Pranaya", "Kumar" };
+
+            Func<string, IEnumerable<char>> func1 = (input) => input;
+            Func<string, char, string> func2 = (data, character) => $"{data}-->{character}";
+
+            var methodSyntax = nameList.SelectMany(func1, func2);
+            foreach (var item in methodSyntax)
+            {
+                Console.WriteLine(item);
+            }
             #endregion
             Console.ReadLine();
         }
@@ -160,6 +284,25 @@ namespace ProjectionOperators
 
             return employee;
 
+        }
+    }
+
+    public class Student
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public List<string> Programming { get; set; }
+
+        public static List<Student> GetStudents()
+        {
+            return new List<Student>()
+            {
+                new Student(){ID = 1, Name = "James", Email = "James@j.com", Programming = new List<string>() { "C#", "Jave", "C++"} },
+                new Student(){ID = 2, Name = "Sam", Email = "Sara@j.com", Programming = new List<string>() { "WCF", "SQL Server", "C#" }},
+                new Student(){ID = 3, Name = "Patrik", Email = "Patrik@j.com", Programming = new List<string>() { "MVC", "Jave", "LINQ"} },
+                new Student(){ID = 4, Name = "Sara", Email = "Sara@j.com", Programming = new List<string>() { "ADO.NET", "C#", "LINQ" } }
+            };
         }
     }
 }
