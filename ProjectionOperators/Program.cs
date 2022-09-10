@@ -33,7 +33,7 @@ namespace ProjectionOperators
         {
 
             /*Remember that if you want select all columns or single column then we dont use anonmyous type.
-             We should use anonymous type only if we want more than one column. IMP - inside anonymous, it should be assigned to some variable
+             We should use anonymous type only if and if we want more than one column. IMP - inside anonymous, it should be assigned to some variable
             or it should directly come from classobject.member*/
 
             #region Retrieves just the EmployeeID property of all employees
@@ -245,7 +245,6 @@ namespace ProjectionOperators
 
             #endregion
 
-
             #region SelectMany with new Example
 
             /*IMP POINT: Func output result is also infered from the output of lambda expression. If we give string as output then the return type
@@ -264,6 +263,84 @@ namespace ProjectionOperators
                 Console.WriteLine(item);
             }
             #endregion
+
+            #region select method without index - 2022 September
+            /*
+			Func<Student, string> func = (student) => student.Email;
+            var result = Student.GetStudents().Select(func);
+
+
+            foreach (var item in result)
+			{
+                Console.WriteLine($"{item}");
+                //Console.WriteLine($"{item.order} ===> {item.email}");
+            }
+            */
+            #endregion
+
+            #region select method with index - 2022 September
+            /*
+            Func<Student, int, dynamic> FuncIndex = (student, index) => new { order = index, email = student.Email};
+            var result = Student.GetStudents().Select(FuncIndex);
+
+            foreach (var item in result)
+            {
+                Console.WriteLine($"{item.order} ===> {item.email}");
+            }
+            */
+            #endregion
+
+            #region 1- overload selectMany method without index and one Func - 2022 September
+            /*
+            Func<Student, List<string>> func = (student) => student.Programming;
+            var result = Student.GetStudents().SelectMany(func);
+
+
+            foreach (var item in result)
+			{
+                Console.WriteLine($"{item}");
+            }
+            */
+            #endregion
+
+            #region 2 - overload selectMany method with index and one Func - 2022 September
+            //selectMany with index and one Func-->It will loop through each item and then collect its listofvalues and its index. 
+            // * Along with each Once looping is finished, then it merges each listOFValues into one list. we can use select method to concat index on each
+            // listofvalues . 
+            // * Becuase we cannot specify ananymous method in this overload
+            /*
+           Func<Student, int, IEnumerable<string>> funcIndexor = (student, index) => student.Programming.Select( x => x + index);
+           var result = Student.GetStudents().SelectMany(funcIndexor);
+
+           foreach (var item in result)
+           {
+               Console.WriteLine($"{item}");
+           }
+            */
+            #endregion
+
+            #region 3 - overload selectMany method without index and two Func  - 2022 September
+
+
+            //Projects each element of a sequence to an System.Collections.Generic.IEnumerable`1,
+            //flattens the resulting sequences into one sequence i,e IEnumerable<string> here in this example, and invokes a result selector
+            //function on each element therein.
+            Func<Student, IEnumerable<string>> F1 = (stu) => stu.Programming;
+            // Func<Student, string, string> F2 = (student, list) => $"{student.Name} ====>{list}";
+
+            Func<Student, string, dynamic> F2 = (student, list) => new { name = student.Name, subject = list };
+            var result = Student.GetStudents().SelectMany(F1, F2);
+
+
+            foreach (var item in result)
+            {
+                Console.WriteLine($"{item.name} ===> {item.subject}");
+
+                // Console.WriteLine(item);
+            }
+
+            #endregion
+
             Console.ReadLine();
         }
 
