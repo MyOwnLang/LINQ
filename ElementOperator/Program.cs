@@ -11,6 +11,8 @@ namespace ElementOperator
     {
         static void Main(string[] args)
         {
+            /*These are used to get the matching row itself and not boolean value as a result like Any(),All() and Contains()*/
+
             #region ------------------First()----------------------------------------
             /*
             //Example 1: Returns the first element from the sequence [ i.e source carrier]
@@ -48,7 +50,7 @@ namespace ElementOperator
 
             #region------------------FirstorDefault()---------------------------
             /*
-            //Example 1: Returns ZERO. No element in the sequence satisfies the condition, so the default value (ZERO) for int is returned.
+            //Example 1: Returns default value of the type ex: for int, it is zero and for reference it is null. No element in the sequence satisfies the condition, so the default value (ZERO) for int is returned.
 
             DataTable employee = CreateDataTable();
             DataRow result = employee.AsEnumerable().FirstOrDefault(row => row.Field<int>("EmployeeID") > 109);
@@ -78,14 +80,17 @@ namespace ElementOperator
 
             #region------------------Single()-------------------------------------
             /*
+             * use Single() when you want to fetch or for unique record or primary key record
             DataTable employee = CreateDataTable();
             DataRow result = employee.AsEnumerable().Single(row => row.Field<int>("EmployeeID") == 101);
-            Console.WriteLine($"FirstOrDefault() will return Returns the only element (1) of the sequence. if there is more than one element found otherwise it will throws an exception if the sequence is empty or has more than one element.");
+            Console.WriteLine($"Single() will return Returns the only element of the sequence. Suppose in case if there is more than one element found, i mean if there 
+            is a duplicate element for the given conditon then it will throws an exception. It will throw exception if the sequence is empty")
             Console.WriteLine($"------------------------------------------------------");
             Console.WriteLine($"{result.Field<string>("FirstName")}");
             Console.ReadLine();
 
-                //SingleOrDefault: Very similar to Single(), except this method does not throw an exception when the sequence is empty or when no element in the sequence satisfies the given condition. 
+                //SingleOrDefault: Very similar to Single(), except this method does not throw an exception when the sequence is empty
+            or when no element in the sequence satisfies the given condition. 
                 //Just like Single(), this method will still throw an exception, if more than one element in the sequence satisfies the given condition.
             */
             #endregion
@@ -94,13 +99,15 @@ namespace ElementOperator
             /*
             DataTable employee = CreateDataTable();
             IEnumerable<DataRow> result = employee.AsEnumerable().DefaultIfEmpty();
-            Console.WriteLine($"DefaultIfEmpty()  If the sequence on which this method is called is not empty, then the values of the original sequence are returned.");
+            Console.WriteLine($"DefaultIfEmpty()  If the sequence on which this method is called is not empty, then the values of the original sequence 
+            are returned.");
             Console.WriteLine($"------------------------------------------------------");
             foreach (var item in result)
             {
                 Console.WriteLine($"{item.Field<string>("FirstName")}");
             }
-            //The other overloaded version with a parameter allows us to specify a default value.If this method is called on a sequence that is not empty, then the values of the original sequence are returned.If the sequence is empty, then this method returns a sequence with the specified defualt value.
+            //The other overloaded version with a parameter allows us to specify a default value.If this method is called on a sequence that is not empty, then the values of the original sequence are returned.
+            If the sequence is empty, then this method returns a sequence with the specified defualt value.
             Example 14 : Since the sequence is empty, a sequence containing the specified default value(10) is returned.
             int[] numbers = { };
             IEnumerable<int> result = numbers.DefaultIfEmpty(10);

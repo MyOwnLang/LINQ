@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Set", "Set\Set.csproj", "{A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generator", "Generator\Generator.csproj", "{0FBAA4EB-0F77-4C97-A97B-F59835779EAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qunatifiers", "Qunatifiers\Qunatifiers.csproj", "{3AF41FEB-4AD9-45B3-9A37-CBBF6A6D0440}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantifiers", "Qunatifiers\Quantifiers.csproj", "{3AF41FEB-4AD9-45B3-9A37-CBBF6A6D0440}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
